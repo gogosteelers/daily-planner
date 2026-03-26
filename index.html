@@ -292,6 +292,17 @@
             margin-top: 2px;
         }
 
+        .task-edit {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #ccc;
+            padding: 4px 8px;
+        }
+
+        .task-edit:hover { color: #4361ee; }
+
         .task-delete {
             background: none;
             border: none;
@@ -454,6 +465,18 @@
             render();
         }
 
+        function editTask(id) {
+            const tasks = getTasks(selectedDate);
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            const newName = prompt('Edit task:', task.name);
+            if (newName !== null && newName.trim()) {
+                task.name = newName.trim();
+                saveTasks(selectedDate, tasks);
+                render();
+            }
+        }
+
         function setCategory(cat) {
             taskCategory = cat;
             document.getElementById('catWork').className = 'cat-btn' + (cat === 'work' ? ' active-work' : '');
@@ -580,6 +603,7 @@
                         <div class="task-name">${escapeHtml(t.name)}<span class="cat-badge ${t.category || 'work'}">${(t.category || 'work').toUpperCase()}</span></div>
                         ${t.time ? '<div class="task-time">' + formatTime12(t.time) + '</div>' : ''}
                     </div>
+                    <button class="task-edit" onclick="editTask(${t.id})">&#9998;</button>
                     <button class="task-delete" onclick="deleteTask(${t.id})">&#215;</button>
                 </div>
             `).join('');
