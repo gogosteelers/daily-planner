@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Planner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            color: #1a1a2e;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0 20px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .date-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 16px 0 24px;
+        }
+
+        .date-nav button {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .date-nav button:hover { background: #e8e8e8; }
+
+        .date-nav .current-date {
+            font-size: 1.2rem;
+            font-weight: 600;
+            min-width: 220px;
+            text-align: center;
+        }
+
+        .date-nav .today-btn {
+            background: #4361ee;
+            color: #fff;
+            border: none;
+            font-weight: 600;
+        }
+
+        .date-nav .today-btn:hover { background: #3a56d4; }
+
+        .stats {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .stat-card .number {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .stat-card.total .number { color: #4361ee; }
+        .stat-card.done .number { color: #2ec4b6; }
+        .stat-card.pending .number { color: #ff6b6b; }
+
+        .add-task {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .add-task h2 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: #555;
+        }
+
+        .task-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .task-form input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 14px;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .task-form input[type="text"]:focus {
+            outline: none;
+            border-color: #4361ee;
+        }
+
+        .task-form input[type="time"] {
+            padding: 10px 14px;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .task-form select {
+            padding: 10px 14px;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: #fff;
+        }
+
+        .task-form button {
+            padding: 10px 24px;
+            background: #4361ee;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .task-form button:hover { background: #3a56d4; }
+
+        .task-list {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .task-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .task-list-header h2 {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .export-btn {
+            padding: 6px 14px;
+            background: #2ec4b6;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .export-btn:hover { background: #27ab9e; }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            border-bottom: 1px solid #f5f5f5;
+            transition: background 0.2s;
+        }
+
+        .task-item:hover { background: #fafafa; }
+
+        .task-item.done {
+            opacity: 0.6;
+        }
+
+        .task-item.done .task-name {
+            text-decoration: line-through;
+        }
+
+        .task-check {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .task-check:hover { border-color: #4361ee; }
+
+        .task-item.done .task-check {
+            background: #2ec4b6;
+            border-color: #2ec4b6;
+        }
+
+        .task-check::after {
+            content: '';
+            display: none;
+        }
+
+        .task-item.done .task-check::after {
+            content: '\2713';
+            display: block;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .task-info {
+            flex: 1;
+            margin-left: 14px;
+        }
+
+        .task-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+            font-size: 0.78rem;
+            color: #999;
+        }
+
+        .priority-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-high { background: #ffe0e0; color: #d63031; }
+        .priority-medium { background: #fff3e0; color: #e17055; }
+        .priority-low { background: #e0f7e9; color: #00b894; }
+
+        .task-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .task-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .task-actions button:hover { background: #f0f0f0; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #bbb;
+        }
+
+        .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+        .empty-state p { font-size: 1rem; }
+
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 4px 12px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: #4361ee;
+            color: #fff;
+        }
+
+        .notes-input {
+            width: 100%;
+            margin-top: 8px;
+            padding: 8px 14px;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            resize: none;
+        }
+
+        .clear-all-btn {
+            padding: 6px 14px;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        .clear-all-btn:hover { background: #e55a5a; }
+
+        @media (max-width: 600px) {
+            .task-form { flex-direction: column; }
+            .task-form input, .task-form select, .task-form button { width: 100%; }
+            .stats { flex-direction: column; }
+            .date-nav { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Daily Planner</h1>
+        </header>
+
+        <div class="date-nav">
+            <button onclick="changeDate(-1)">&larr;</button>
+            <span class="current-date" id="currentDate"></span>
+            <button onclick="changeDate(1)">&rarr;</button>
+            <button class="today-btn" onclick="goToday()">Today</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card total">
+                <div class="number" id="totalCount">0</div>
+                <div class="label">Total Tasks</div>
+            </div>
+            <div class="stat-card done">
+                <div class="number" id="doneCount">0</div>
+                <div class="label">Completed</div>
+            </div>
+            <div class="stat-card pending">
+                <div class="number" id="pendingCount">0</div>
+                <div class="label">Pending</div>
+            </div>
+        </div>
+
+        <div class="add-task">
+            <h2>Add New Task</h2>
+            <div class="task-form">
+                <input type="text" id="taskInput" placeholder="What do you need to do?" onkeydown="if(event.key==='Enter')addTask()">
+                <input type="time" id="taskTime">
+                <select id="taskPriority">
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="low">Low</option>
+                </select>
+                <button onclick="addTask()">Add Task</button>
+            </div>
+            <textarea class="notes-input" id="taskNotes" rows="1" placeholder="Notes (optional)"></textarea>
+        </div>
+
+        <div class="task-list">
+            <div class="task-list-header">
+                <h2>Tasks</h2>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="filter-bar">
+                        <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+                        <button class="filter-btn" onclick="setFilter('pending', this)">Pending</button>
+                        <button class="filter-btn" onclick="setFilter('done', this)">Done</button>
+                    </div>
+                    <button class="export-btn" onclick="exportCSV()">Export CSV</button>
+                    <button class="export-btn" style="background:#4361ee;" onclick="exportToCalendar()">Add to Calendar</button>
+                </div>
+            </div>
+            <div id="taskContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        let filter = 'all';
+
+        function dateKey(d) {
+            return d.toISOString().split('T')[0];
+        }
+
+        function formatDate(d) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return d.toLocaleDateString('en-US', options);
+        }
+
+        function isToday(d) {
+            const today = new Date();
+            return dateKey(d) === dateKey(today);
+        }
+
+        function getTasks(date) {
+            const key = 'planner_' + dateKey(date);
+            return JSON.parse(localStorage.getItem(key) || '[]');
+        }
+
+        function saveTasks(date, tasks) {
+            const key = 'planner_' + dateKey(date);
+            localStorage.setItem(key, JSON.stringify(tasks));
+        }
+
+        function changeDate(offset) {
+            currentDate.setDate(currentDate.getDate() + offset);
+            render();
+        }
+
+        function goToday() {
+            currentDate = new Date();
+            render();
+        }
+
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const time = document.getElementById('taskTime');
+            const priority = document.getElementById('taskPriority');
+            const notes = document.getElementById('taskNotes');
+
+            const name = input.value.trim();
+            if (!name) return;
+
+            const tasks = getTasks(currentDate);
+            tasks.push({
+                id: Date.now(),
+                name: name,
+                time: time.value || '',
+                priority: priority.value,
+                notes: notes.value.trim(),
+                done: false,
+                created: new Date().toISOString()
+            });
+
+            tasks.sort((a, b) => {
+                if (!a.time && !b.time) return 0;
+                if (!a.time) return 1;
+                if (!b.time) return -1;
+                return a.time.localeCompare(b.time);
+            });
+
+            saveTasks(currentDate, tasks);
+            input.value = '';
+            time.value = '';
+            notes.value = '';
+            priority.value = 'medium';
+            render();
+        }
+
+        function toggleTask(id) {
+            const tasks = getTasks(currentDate);
+            const task = tasks.find(t => t.id === id);
+            if (task) task.done = !task.done;
+            saveTasks(currentDate, tasks);
+            render();
+        }
+
+        function deleteTask(id) {
+            let tasks = getTasks(currentDate);
+            tasks = tasks.filter(t => t.id !== id);
+            saveTasks(currentDate, tasks);
+            render();
+        }
+
+        function editTask(id) {
+            const tasks = getTasks(currentDate);
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            const newName = prompt('Edit task:', task.name);
+            if (newName !== null && newName.trim()) {
+                task.name = newName.trim();
+                saveTasks(currentDate, tasks);
+                render();
+            }
+        }
+
+        function setFilter(f, btn) {
+            filter = f;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            render();
+        }
+
+        function formatTime12(time24) {
+            if (!time24) return '';
+            const [h, m] = time24.split(':');
+            const hour = parseInt(h);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${m} ${ampm}`;
+        }
+
+        function exportCSV() {
+            const tasks = getTasks(currentDate);
+            if (tasks.length === 0) {
+                alert('No tasks to export.');
+                return;
+            }
+
+            let csv = 'Date,Time,Task,Priority,Status,Notes\n';
+            tasks.forEach(t => {
+                const date = dateKey(currentDate);
+                const time = t.time || '';
+                const name = '"' + t.name.replace(/"/g, '""') + '"';
+                const priority = t.priority.charAt(0).toUpperCase() + t.priority.slice(1);
+                const status = t.done ? 'Done' : 'Pending';
+                const notes = '"' + (t.notes || '').replace(/"/g, '""') + '"';
+                csv += `${date},${time},${name},${priority},${status},${notes}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `planner_${dateKey(currentDate)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportToCalendar() {
+            const tasks = getTasks(currentDate);
+            const pending = tasks.filter(t => !t.done);
+            if (pending.length === 0) {
+                alert('No pending tasks to add to calendar.');
+                return;
+            }
+
+            let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Daily Planner//EN\r\nCALSCALE:GREGORIAN\r\n';
+
+            pending.forEach(task => {
+                const d = dateKey(currentDate).replace(/-/g, '');
+                let dtstart, dtend;
+
+                if (task.time) {
+                    const [h, m] = task.time.split(':');
+                    dtstart = d + 'T' + h + m + '00';
+                    const endH = String(parseInt(h) + 1).padStart(2, '0');
+                    dtend = d + 'T' + endH + m + '00';
+                } else {
+                    dtstart = d;
+                    dtend = d;
+                }
+
+                const uid = task.id + '@dailyplanner';
+                const priority = task.priority === 'high' ? 1 : (task.priority === 'medium' ? 5 : 9);
+
+                ics += 'BEGIN:VEVENT\r\n';
+                if (task.time) {
+                    ics += 'DTSTART:' + dtstart + '\r\n';
+                    ics += 'DTEND:' + dtend + '\r\n';
+                } else {
+                    ics += 'DTSTART;VALUE=DATE:' + dtstart + '\r\n';
+                    ics += 'DTEND;VALUE=DATE:' + dtend + '\r\n';
+                }
+                ics += 'SUMMARY:' + task.name.replace(/[,;\\]/g, ' ') + '\r\n';
+                ics += 'PRIORITY:' + priority + '\r\n';
+                if (task.notes) {
+                    ics += 'DESCRIPTION:' + task.notes.replace(/[,;\\]/g, ' ').replace(/\n/g, '\\n') + '\r\n';
+                }
+                ics += 'UID:' + uid + '\r\n';
+                ics += 'END:VEVENT\r\n';
+            });
+
+            ics += 'END:VCALENDAR\r\n';
+
+            const blob = new Blob([ics], { type: 'text/calendar' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `planner_${dateKey(currentDate)}.ics`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function render() {
+            document.getElementById('currentDate').textContent =
+                (isToday(currentDate) ? 'Today - ' : '') + formatDate(currentDate);
+
+            const tasks = getTasks(currentDate);
+            const total = tasks.length;
+            const done = tasks.filter(t => t.done).length;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('doneCount').textContent = done;
+            document.getElementById('pendingCount').textContent = total - done;
+
+            const container = document.getElementById('taskContainer');
+
+            let filtered = tasks;
+            if (filter === 'pending') filtered = tasks.filter(t => !t.done);
+            if (filter === 'done') filtered = tasks.filter(t => t.done);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">${total === 0 ? '📝' : (filter === 'done' ? '🎯' : '🎉')}</div>
+                        <p>${total === 0 ? 'No tasks yet. Add one above!' :
+                            (filter === 'done' ? 'No completed tasks yet.' : 'All tasks completed!')}</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(task => `
+                <div class="task-item ${task.done ? 'done' : ''}">
+                    <div class="task-check" onclick="toggleTask(${task.id})"></div>
+                    <div class="task-info">
+                        <div class="task-name">${escapeHtml(task.name)}</div>
+                        <div class="task-meta">
+                            ${task.time ? '<span>' + formatTime12(task.time) + '</span>' : ''}
+                            <span class="priority-badge priority-${task.priority}">${task.priority}</span>
+                            ${task.notes ? '<span>' + escapeHtml(task.notes) + '</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button onclick="editTask(${task.id})" title="Edit">&#9998;</button>
+                        <button onclick="deleteTask(${task.id})" title="Delete">&#128465;</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        render();
+        document.getElementById('taskInput').focus();
+    </script>
+</body>
+</html>
