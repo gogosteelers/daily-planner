@@ -30,40 +30,109 @@
             font-weight: 700;
         }
 
-        .date-nav {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
+        /* Calendar */
+        .calendar {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            padding: 16px;
             margin-bottom: 20px;
         }
 
-        .date-nav button {
-            background: #fff;
+        .cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .cal-header button {
+            background: none;
             border: 1px solid #ddd;
             border-radius: 8px;
-            padding: 8px 14px;
+            padding: 6px 12px;
             cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .cal-header .cal-title {
             font-size: 1rem;
-        }
-
-        .date-nav .current-date {
-            font-size: 1.05rem;
             font-weight: 600;
-            text-align: center;
         }
 
-        .date-nav .today-btn {
+        .cal-header .today-btn {
             background: #4361ee;
             color: #fff;
             border: none;
             font-weight: 600;
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            text-align: center;
+        }
+
+        .cal-day-label {
+            font-size: 0.7rem;
+            color: #999;
+            padding: 4px 0;
+            font-weight: 600;
+        }
+
+        .cal-day {
+            padding: 8px 4px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cal-day:hover { background: #f0f0f0; }
+        .cal-day.other-month { color: #ccc; }
+        .cal-day.today { background: #e8edff; color: #4361ee; font-weight: 700; }
+        .cal-day.selected { background: #4361ee; color: #fff; font-weight: 700; }
+        .cal-day.selected.today { background: #4361ee; color: #fff; }
+
+        .cal-day .dot {
+            width: 4px;
+            height: 4px;
+            background: #2ec4b6;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cal-day.selected .dot { background: #fff; }
+
+        /* Progress */
+        .progress-bar {
+            height: 4px;
+            background: #e8e8e8;
+            border-radius: 2px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #2ec4b6;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        /* Add task */
         .add-task {
             display: flex;
             gap: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 6px;
         }
 
         .add-task input[type="text"] {
@@ -75,9 +144,7 @@
             outline: none;
         }
 
-        .add-task input[type="text"]:focus {
-            border-color: #4361ee;
-        }
+        .add-task input[type="text"]:focus { border-color: #4361ee; }
 
         .add-task button {
             padding: 12px 20px;
@@ -90,6 +157,70 @@
             cursor: pointer;
         }
 
+        .time-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .time-row input[type="time"] {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .time-row input[type="time"]:focus { border-color: #4361ee; }
+
+        .time-row label {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .category-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .cat-btn {
+            padding: 6px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            background: #fff;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .cat-btn.active-work {
+            background: #4361ee;
+            color: #fff;
+            border-color: #4361ee;
+        }
+
+        .cat-btn.active-personal {
+            background: #e17055;
+            color: #fff;
+            border-color: #e17055;
+        }
+
+        .cat-badge {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .cat-badge.work { background: #e8edff; color: #4361ee; }
+        .cat-badge.personal { background: #ffeae5; color: #e17055; }
+
+        /* Task list */
         .task-list {
             background: #fff;
             border-radius: 12px;
@@ -105,6 +236,11 @@
             border-bottom: 1px solid #eee;
             font-size: 0.85rem;
             color: #888;
+        }
+
+        .selected-date-label {
+            font-weight: 600;
+            color: #1a1a2e;
         }
 
         .task-item {
@@ -141,10 +277,19 @@
             font-weight: 700;
         }
 
-        .task-name {
+        .task-info {
             flex: 1;
             margin-left: 12px;
+        }
+
+        .task-name {
             font-size: 0.95rem;
+        }
+
+        .task-time {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 2px;
         }
 
         .task-delete {
@@ -183,21 +328,6 @@
         }
 
         .bottom-btn:hover { background: #f5f5f5; }
-
-        .progress-bar {
-            height: 4px;
-            background: #e8e8e8;
-            border-radius: 2px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: #2ec4b6;
-            border-radius: 2px;
-            transition: width 0.3s;
-        }
     </style>
 </head>
 <body>
@@ -206,11 +336,14 @@
             <h1>Daily Planner</h1>
         </header>
 
-        <div class="date-nav">
-            <button onclick="changeDate(-1)">&larr;</button>
-            <span class="current-date" id="currentDate"></span>
-            <button onclick="changeDate(1)">&rarr;</button>
-            <button class="today-btn" onclick="goToday()">Today</button>
+        <div class="calendar">
+            <div class="cal-header">
+                <button onclick="changeMonth(-1)">&larr;</button>
+                <span class="cal-title" id="calTitle"></span>
+                <button class="today-btn" onclick="goToday()">Today</button>
+                <button onclick="changeMonth(1)">&rarr;</button>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
         </div>
 
         <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
@@ -219,9 +352,18 @@
             <input type="text" id="taskInput" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTask()">
             <button onclick="addTask()">+</button>
         </div>
+        <div class="time-row">
+            <label>Time:</label>
+            <input type="time" id="taskTime">
+        </div>
+        <div class="category-row">
+            <button class="cat-btn active-work" id="catWork" onclick="setCategory('work')">Work</button>
+            <button class="cat-btn" id="catPersonal" onclick="setCategory('personal')">Personal</button>
+        </div>
 
         <div class="task-list">
             <div class="task-list-header">
+                <span class="selected-date-label" id="selectedDateLabel"></span>
                 <span id="taskCount"></span>
             </div>
             <div id="taskContainer"></div>
@@ -234,16 +376,11 @@
     </div>
 
     <script>
-        let currentDate = new Date();
+        let selectedDate = new Date();
+        let viewMonth = new Date();
+        let taskCategory = 'work';
 
         function dateKey(d) { return d.toISOString().split('T')[0]; }
-
-        function formatDate(d) {
-            const today = new Date();
-            const isToday = dateKey(d) === dateKey(today);
-            const str = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-            return isToday ? 'Today, ' + str : str;
-        }
 
         function getTasks(date) {
             return JSON.parse(localStorage.getItem('planner_' + dateKey(date)) || '[]');
@@ -253,36 +390,74 @@
             localStorage.setItem('planner_' + dateKey(date), JSON.stringify(tasks));
         }
 
-        function changeDate(offset) {
-            currentDate.setDate(currentDate.getDate() + offset);
+        function hasTasksOnDate(d) {
+            return getTasks(d).length > 0;
+        }
+
+        function formatTime12(time24) {
+            if (!time24) return '';
+            const [h, m] = time24.split(':');
+            const hour = parseInt(h);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return hour12 + ':' + m + ' ' + ampm;
+        }
+
+        function changeMonth(offset) {
+            viewMonth.setMonth(viewMonth.getMonth() + offset);
             render();
         }
 
-        function goToday() { currentDate = new Date(); render(); }
+        function goToday() {
+            selectedDate = new Date();
+            viewMonth = new Date();
+            render();
+        }
+
+        function selectDate(y, m, d) {
+            selectedDate = new Date(y, m, d);
+            render();
+        }
 
         function addTask() {
             const input = document.getElementById('taskInput');
+            const timeInput = document.getElementById('taskTime');
             const name = input.value.trim();
             if (!name) return;
 
-            const tasks = getTasks(currentDate);
-            tasks.push({ id: Date.now(), name, done: false });
-            saveTasks(currentDate, tasks);
+            const tasks = getTasks(selectedDate);
+            tasks.push({ id: Date.now(), name, time: timeInput.value || '', category: taskCategory, done: false });
+
+            tasks.sort((a, b) => {
+                if (!a.time && !b.time) return 0;
+                if (!a.time) return 1;
+                if (!b.time) return -1;
+                return a.time.localeCompare(b.time);
+            });
+
+            saveTasks(selectedDate, tasks);
             input.value = '';
+            timeInput.value = '';
             render();
         }
 
         function toggleTask(id) {
-            const tasks = getTasks(currentDate);
+            const tasks = getTasks(selectedDate);
             const task = tasks.find(t => t.id === id);
             if (task) task.done = !task.done;
-            saveTasks(currentDate, tasks);
+            saveTasks(selectedDate, tasks);
             render();
         }
 
         function deleteTask(id) {
-            saveTasks(currentDate, getTasks(currentDate).filter(t => t.id !== id));
+            saveTasks(selectedDate, getTasks(selectedDate).filter(t => t.id !== id));
             render();
+        }
+
+        function setCategory(cat) {
+            taskCategory = cat;
+            document.getElementById('catWork').className = 'cat-btn' + (cat === 'work' ? ' active-work' : '');
+            document.getElementById('catPersonal').className = 'cat-btn' + (cat === 'personal' ? ' active-personal' : '');
         }
 
         function escapeHtml(text) {
@@ -292,36 +467,100 @@
         }
 
         function exportCSV() {
-            const tasks = getTasks(currentDate);
+            const tasks = getTasks(selectedDate);
             if (!tasks.length) return alert('No tasks to export.');
-            let csv = 'Date,Task,Status\n';
+            let csv = 'Date,Time,Task,Status\n';
             tasks.forEach(t => {
-                csv += `${dateKey(currentDate)},"${t.name.replace(/"/g, '""')}",${t.done ? 'Done' : 'Pending'}\n`;
+                csv += `${dateKey(selectedDate)},${t.time || ''},"${t.name.replace(/"/g, '""')}",${t.done ? 'Done' : 'Pending'}\n`;
             });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-            a.download = `planner_${dateKey(currentDate)}.csv`;
+            a.download = `planner_${dateKey(selectedDate)}.csv`;
             a.click();
         }
 
         function exportToCalendar() {
-            const tasks = getTasks(currentDate).filter(t => !t.done);
+            const tasks = getTasks(selectedDate).filter(t => !t.done);
             if (!tasks.length) return alert('No pending tasks.');
-            const d = dateKey(currentDate).replace(/-/g, '');
+            const d = dateKey(selectedDate).replace(/-/g, '');
             let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Daily Planner//EN\r\n';
             tasks.forEach(t => {
-                ics += `BEGIN:VEVENT\r\nDTSTART;VALUE=DATE:${d}\r\nSUMMARY:${t.name.replace(/[,;\\]/g, ' ')}\r\nUID:${t.id}@planner\r\nEND:VEVENT\r\n`;
+                ics += 'BEGIN:VEVENT\r\n';
+                if (t.time) {
+                    const [h, m] = t.time.split(':');
+                    ics += `DTSTART:${d}T${h}${m}00\r\n`;
+                    const endH = String(parseInt(h) + 1).padStart(2, '0');
+                    ics += `DTEND:${d}T${endH}${m}00\r\n`;
+                } else {
+                    ics += `DTSTART;VALUE=DATE:${d}\r\n`;
+                }
+                ics += `SUMMARY:${t.name.replace(/[,;\\]/g, ' ')}\r\nUID:${t.id}@planner\r\nEND:VEVENT\r\n`;
             });
             ics += 'END:VCALENDAR\r\n';
             const a = document.createElement('a');
             a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
-            a.download = `planner_${dateKey(currentDate)}.ics`;
+            a.download = `planner_${dateKey(selectedDate)}.ics`;
             a.click();
         }
 
+        function renderCalendar() {
+            const year = viewMonth.getFullYear();
+            const month = viewMonth.getMonth();
+            const today = new Date();
+
+            document.getElementById('calTitle').textContent =
+                viewMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrev = new Date(year, month, 0).getDate();
+
+            let html = '';
+            ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
+                html += `<div class="cal-day-label">${d}</div>`;
+            });
+
+            // Previous month days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrev - i;
+                const d = new Date(year, month - 1, day);
+                const hasTasks = hasTasksOnDate(d);
+                html += `<div class="cal-day other-month" onclick="selectDate(${year},${month-1},${day})">${day}${hasTasks ? '<div class="dot"></div>' : ''}</div>`;
+            }
+
+            // Current month days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const d = new Date(year, month, day);
+                const isToday = dateKey(d) === dateKey(today);
+                const isSelected = dateKey(d) === dateKey(selectedDate);
+                const hasTasks = hasTasksOnDate(d);
+                let cls = 'cal-day';
+                if (isToday) cls += ' today';
+                if (isSelected) cls += ' selected';
+                html += `<div class="${cls}" onclick="selectDate(${year},${month},${day})">${day}${hasTasks ? '<div class="dot"></div>' : ''}</div>`;
+            }
+
+            // Next month days
+            const totalCells = firstDay + daysInMonth;
+            const remaining = (7 - totalCells % 7) % 7;
+            for (let day = 1; day <= remaining; day++) {
+                const d = new Date(year, month + 1, day);
+                const hasTasks = hasTasksOnDate(d);
+                html += `<div class="cal-day other-month" onclick="selectDate(${year},${month+1},${day})">${day}${hasTasks ? '<div class="dot"></div>' : ''}</div>`;
+            }
+
+            document.getElementById('calGrid').innerHTML = html;
+        }
+
         function render() {
-            document.getElementById('currentDate').textContent = formatDate(currentDate);
-            const tasks = getTasks(currentDate);
+            renderCalendar();
+
+            const label = selectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            const todayStr = dateKey(new Date());
+            const isToday = dateKey(selectedDate) === todayStr;
+            document.getElementById('selectedDateLabel').textContent = isToday ? 'Today, ' + label : label;
+
+            const tasks = getTasks(selectedDate);
             const done = tasks.filter(t => t.done).length;
             const total = tasks.length;
 
@@ -337,7 +576,10 @@
             container.innerHTML = tasks.map(t => `
                 <div class="task-item ${t.done ? 'done' : ''}">
                     <div class="task-check" onclick="toggleTask(${t.id})"></div>
-                    <span class="task-name">${escapeHtml(t.name)}</span>
+                    <div class="task-info">
+                        <div class="task-name">${escapeHtml(t.name)}<span class="cat-badge ${t.category || 'work'}">${(t.category || 'work').toUpperCase()}</span></div>
+                        ${t.time ? '<div class="task-time">' + formatTime12(t.time) + '</div>' : ''}
+                    </div>
                     <button class="task-delete" onclick="deleteTask(${t.id})">&#215;</button>
                 </div>
             `).join('');
