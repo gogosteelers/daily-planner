@@ -383,6 +383,7 @@
         <div class="bottom-bar">
             <button class="bottom-btn" onclick="exportCSV()">Export CSV</button>
             <button class="bottom-btn" onclick="exportToCalendar()">Add to Calendar</button>
+            <button class="bottom-btn" style="color:#ff6b6b;border-color:#ff6b6b;" onclick="removeAllTasks()">Remove All</button>
         </div>
     </div>
 
@@ -463,6 +464,15 @@
         function deleteTask(id) {
             saveTasks(selectedDate, getTasks(selectedDate).filter(t => t.id !== id));
             render();
+        }
+
+        function removeAllTasks() {
+            const tasks = getTasks(selectedDate);
+            if (!tasks.length) return alert('No tasks to remove.');
+            if (confirm('Remove all tasks for this day?')) {
+                saveTasks(selectedDate, []);
+                render();
+            }
         }
 
         function editTask(id) {
